@@ -1,0 +1,43 @@
+{
+    "id": "generate-tree",
+    "name": "生成分类目录",
+    "description": "根据书签摘要生成结构化的分类目录树",
+    "version": "1.0.0",
+    "content": "请分析以下书签摘要，生成一个结构化的分类目录。\n\n书签摘要列表：\n{bookmarkSummaries}\n\n要求：\n1. 分类目录最大层数：{maxDepth}层\n2. 一级分类数量不超过{maxCategories}个\n3. 每个分类名称2-6个中文字符或2-10个英文字符\n4. 分类应覆盖所有书签类型\n5. 分类名称要通用、易懂\n6. 不要包含\"未分类\"类别，系统会自动添加\n7. 同时生成用户画像，用于后续分类优化\n\n请返回JSON格式：\n{\n  \"categories\": [\n    {\n      \"name\": \"分类名称\",\n      \"children\": [\n        { \"name\": \"子分类名称\" }\n      ]\n    }\n  ],\n  \"userProfile\": {\n    \"interests\": [\"兴趣1\", \"兴趣2\"],\n    \"professions\": [\"职业领域\"],\n    \"summary\": \"用户画像简述\"\n  }\n}",
+    "variables": [
+        {
+            "name": "bookmarkSummaries",
+            "type": "string",
+            "description": "书签摘要列表，格式为：序号. 标题 - 域名",
+            "required": true
+        },
+        {
+            "name": "maxDepth",
+            "type": "number",
+            "description": "分类目录最大层数",
+            "required": true,
+            "default": 2
+        },
+        {
+            "name": "maxCategories",
+            "type": "number",
+            "description": "一级分类最大数量",
+            "required": true,
+            "default": 10
+        }
+    ],
+    "outputFormat": {
+        "type": "object",
+        "properties": {
+            "categories": {
+                "type": "array",
+                "description": "分类目录数组"
+            },
+            "userProfile": {
+                "type": "object",
+                "description": "用户画像"
+            }
+        }
+    },
+    "examples": []
+}

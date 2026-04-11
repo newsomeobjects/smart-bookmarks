@@ -1,0 +1,30 @@
+{
+    "version": "1.0.0",
+    "description": "AIMark 提示词配置索引",
+    "prompts": {
+        "system": {
+            "file": "system.json",
+            "name": "系统提示词",
+            "description": "定义AI助手的角色和行为规则"
+        },
+        "classification": {
+            "generate-tree": {
+                "file": "classification/generate-tree.json",
+                "name": "生成分类目录",
+                "description": "根据书签摘要生成结构化的分类目录树"
+            },
+            "classify-by-tree": {
+                "file": "classification/classify-by-tree.json",
+                "name": "按目录分类书签",
+                "description": "根据已有的分类目录为书签分配分类路径"
+            }
+        },
+        "single": {
+            "classify-single": {
+                "file": "single/classify-single.json",
+                "name": "单书签分类",
+                "description": "为单个书签分配最合适的分类"
+            }
+        }
+    }
+}

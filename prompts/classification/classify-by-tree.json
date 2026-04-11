@@ -1,0 +1,107 @@
+{
+    "id": "classify-by-tree",
+    "name": "按目录分类书签",
+    "description": "根据已有的分类目录为书签分配分类路径，包含归类理由",
+    "version": "2.0.0",
+    "content": "请根据以下分类目录，为每个书签分配最合适的分类路径。\n\n分类目录：\n{categoryTree}\n\n书签列表：\n{bookmarkList}\n\n【归类要求】\n1. 为每个书签分配一个分类路径，格式为\"一级分类/二级分类\"或\"一级分类\"\n2. 如果书签不适合任何已有分类，分配路径为\"未分类\"\n3. 分类路径必须来自分类目录中存在的分类\n4. 每个归类结果必须包含简洁、准确的归类理由，说明归类决策依据\n\n【输出格式】\n必须严格遵循以下JSON结构，包含自校验字段：\n{\n  \"success\": true,\n  \"total\": 5,\n  \"assignments\": [\n    {\n      \"id\": \"书签ID\",\n      \"index\": 1,\n      \"title\": \"书签标题\",\n      \"path\": \"技术开发/后端\",\n      \"reason\": \"内容涉及Python编程，属于后端技术\"\n    }\n  ],\n  \"validation\": {\n    \"allClassified\": true,\n    \"validPaths\": true,\n    \"hasReasons\": true\n  }\n}\n\n【自校验规则】\n- success: 所有书签是否都已归类\n- total: 归类书签总数\n- allClassified: 是否每个书签都有分类路径\n- validPaths: 所有路径是否都在分类目录中\n- hasReasons: 是否每个结果都有归类理由\n\n请确保输出严格符合JSON格式，不要添加任何解释性文字。",
+    "variables": [
+        {
+            "name": "categoryTree",
+            "type": "string",
+            "description": "分类目录的JSON字符串",
+            "required": true
+        },
+        {
+            "name": "bookmarkList",
+            "type": "string",
+            "description": "书签列表，格式为：ID: xxx | 序号. 标题\\n   URL: 地址",
+            "required": true
+        }
+    ],
+    "outputFormat": {
+        "type": "object",
+        "properties": {
+            "success": {
+                "type": "boolean",
+                "description": "是否全部归类成功"
+            },
+            "total": {
+                "type": "number",
+                "description": "归类书签总数"
+            },
+            "assignments": {
+                "type": "array",
+                "description": "分类分配结果数组",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string",
+                            "description": "书签ID"
+                        },
+                        "index": {
+                            "type": "number",
+                            "description": "书签序号"
+                        },
+                        "title": {
+                            "type": "string",
+                            "description": "书签标题"
+                        },
+                        "path": {
+                            "type": "string",
+                            "description": "分类路径"
+                        },
+                        "reason": {
+                            "type": "string",
+                            "description": "归类理由"
+                        }
+                    }
+                }
+            },
+            "validation": {
+                "type": "object",
+                "description": "自校验结果",
+                "properties": {
+                    "allClassified": {
+                        "type": "boolean",
+                        "description": "是否全部已归类"
+                    },
+                    "validPaths": {
+                        "type": "boolean",
+                        "description": "路径是否有效"
+                    },
+                    "hasReasons": {
+                        "type": "boolean",
+                        "description": "是否都有理由"
+                    }
+                }
+            }
+        }
+    },
+    "examples": [
+        {
+            "input": {
+                "categoryTree": "[{\"name\": \"技术开发\", \"children\": [{\"name\": \"前端\"}, {\"name\": \"后端\"}]}]",
+                "bookmarkList": "ID: abc123 | 1. Python正则教程\n   URL: https://docs.python.org/regex"
+            },
+            "output": {
+                "success": true,
+                "total": 1,
+                "assignments": [
+                    {
+                        "id": "abc123",
+                        "index": 1,
+                        "title": "Python正则教程",
+                        "path": "技术开发/后端",
+                        "reason": "内容涉及Python编程，属于后端技术"
+                    }
+                ],
+                "validation": {
+                    "allClassified": true,
+                    "validPaths": true,
+                    "hasReasons": true
+                }
+            }
+        }
+    ]
+}

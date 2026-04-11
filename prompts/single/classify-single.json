@@ -1,0 +1,45 @@
+{
+    "id": "classify-single",
+    "name": "单书签分类",
+    "description": "为单个书签分配最合适的分类",
+    "version": "1.0.0",
+    "content": "请分析以下书签并返回最合适的分类。\n\n现有分类文件夹：\n{existingFolders}\n\n书签信息：\n- 标题：{title}\n- URL：{url}\n\n请返回JSON格式：\n{\n    \"category\": \"分类名称\",\n    \"confidence\": 0.95,\n    \"isNewCategory\": false\n}",
+    "variables": [
+        {
+            "name": "existingFolders",
+            "type": "string",
+            "description": "现有分类文件夹名称列表",
+            "required": true
+        },
+        {
+            "name": "title",
+            "type": "string",
+            "description": "书签标题",
+            "required": true
+        },
+        {
+            "name": "url",
+            "type": "string",
+            "description": "书签URL",
+            "required": true
+        }
+    ],
+    "outputFormat": {
+        "type": "object",
+        "properties": {
+            "category": {
+                "type": "string",
+                "description": "分类名称"
+            },
+            "confidence": {
+                "type": "number",
+                "description": "置信度 0-1"
+            },
+            "isNewCategory": {
+                "type": "boolean",
+                "description": "是否为新分类"
+            }
+        }
+    },
+    "examples": []
+}

@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能书签分类器 - 管理界面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background: #fff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .sidebar-header h1 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .sidebar-header p {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .nav-menu {
+            flex: 1;
+            padding: 12px 0;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: #f5f7fa;
+            color: #333;
+        }
+        
+        .nav-item.active {
+            background: #f0f4ff;
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+        
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content-header {
+            background: #fff;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .content-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .content-body {
+            flex: 1;
+            padding: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+        }
+        
+        .page.active {
+            display: flex;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .tree-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tree-search {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px 8px;
+            min-width: 150px;
+        }
+        
+        .tree-search input {
+            border: none;
+            outline: none;
+            font-size: 12px;
+            background: transparent;
+            width: 100%;
+        }
+        
+        .tree-search input::placeholder {
+            color: #999;
+        }
+        
+        .tree-search-clear {
+            cursor: pointer;
+            color: #999;
+            font-size: 14px;
+            padding: 0 4px;
+        }
+        
+        .tree-search-clear:hover {
+            color: #666;
+        }
+        
+        .tree-actions {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .tree-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.15s;
+        }
+        
+        .tree-action-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+        
+        .tree-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .form-hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: border-color 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            background: #fff;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-danger {
+            background: #ef5350;
+            color: #fff;
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+        
+        .btn-danger:disabled {
+            background: #ffcdd2;
+            cursor: not-allowed;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+        
+        .toggle-label {
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 22px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.2s;
+            border-radius: 22px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.2s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background: #667eea;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(18px);
+        }
+        
+        .divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 12px 0;
+        }
+        
+        .backup-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .backup-item:hover {
+            background: #f5f7fa;
+            border-color: #667eea;
+        }
+        
+        .backup-item input[type="radio"] {
+            accent-color: #667eea;
+        }
+        
+        .backup-info {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            align-items: center;
+        }
+        
+        .backup-date {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .backup-time {
+            color: #888;
+        }
+        
+        .backup-count {
+            color: #667eea;
+            font-size: 12px;
+            background: #f0f4ff;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            background: #4caf50;
+        }
+        
+        .toast.error {
+            background: #f44336;
+        }
+        
+        .bookmark-tree {
+            max-height: 1000px;
+            min-height: 700px;
+            overflow-y: auto;
+        }
+        
+        .bookmark-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .bookmark-item:hover {
+            background: #f5f7fa;
+        }
+        
+        .bookmark-item.folder {
+            font-weight: 500;
+        }
+        
+        .bookmark-item .icon {
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            text-align: center;
+        }
+        
+        .bookmark-children {
+            margin-left: 24px;
+        }
+        
+        .about-section {
+            line-height: 1.8;
+        }
+        
+        .about-section h3 {
+            font-size: 14px;
+            color: #333;
+            margin: 16px 0 8px;
+        }
+        
+        .about-section p {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .about-section ul {
+            font-size: 13px;
+            color: #666;
+            margin-left: 20px;
+        }
+        
+        .provider-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .provider-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .provider-card:hover {
+            border-color: #667eea;
+        }
+        
+        .provider-card.active {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        
+        .provider-card h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .provider-card p {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        textarea.form-input {
+            min-height: 150px;
+            font-family: monospace;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1>智能书签分类器</h1>
+            <p>管理界面 v1.0.0</p>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-item active" data-page="bookmarks">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>书签</span>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>设置</span>
+            </div>
+            <div class="nav-item" data-page="backup">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>备份</span>
+            </div>
+            <div class="nav-item" data-page="about">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>关于</span>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <p>Made with AI</p>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="content-header">
+            <h2 id="pageTitle">书签管理</h2>
+        </div>
+        
+        <div class="content-body">
+            <div id="bookmarksPage" class="page active">
+                <div class="card">
+                    <div class="card-title">
+                        <span>书签管理</span>
+                        <div class="tree-toolbar">
+                            <button class="btn btn-primary" id="organizeBtn" style="margin-right: 12px;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; margin-right: 4px;">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                整理书签
+                            </button>
+                            <div class="tree-search">
+                                <input type="text" id="treeSearch" placeholder="搜索书签...">
+                                <span class="tree-search-clear" id="clearSearch">×</span>
+                            </div>
+                            <div class="tree-actions">
+                                <button class="tree-action-btn" id="expandAll" title="展开全部">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                                <button class="tree-action-btn" id="collapseAll" title="折叠全部">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 15l-6-6-6 6"/>
+                                    </svg>
+                                </button>
+                                <button class="tree-action-btn" id="refreshTree" title="刷新">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M23 4v6h-6M1 20v-6h6"/>
+                                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="bookmarkTreeContainer" style="height: 100%; overflow-y: auto; position: relative;">
+                        <div id="bookmarkTree"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="settingsPage" class="page">
+                <div class="card">
+                    <div class="card-title">AI配置</div>
+                    
+                    <div class="provider-cards" id="providerCards">
+                        <div class="provider-card" data-provider="deepseek">
+                            <h4>DeepSeek</h4>
+                            <p>推荐使用，性价比高</p>
+                        </div>
+                        <div class="provider-card" data-provider="zhipu">
+                            <h4>智谱AI</h4>
+                            <p>国内直连，稳定可靠</p>
+                        </div>
+                        <div class="provider-card" data-provider="openai">
+                            <h4>OpenAI</h4>
+                            <p>GPT系列模型</p>
+                        </div>
+                        <div class="provider-card" data-provider="custom">
+                            <h4>自定义</h4>
+                            <p>自定义API端点</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">API密钥</label>
+                        <input type="password" class="form-input" id="apiKey" placeholder="输入API密钥">
+                        <p class="form-hint">密钥安全存储在浏览器本地，不会上传服务器</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">API端点</label>
+                        <input type="text" class="form-input" id="endpoint" placeholder="API端点URL">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">模型名称</label>
+                            <input type="text" class="form-input" id="model" placeholder="模型名称">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Temperature</label>
+                            <input type="number" class="form-input" id="temperature" min="0" max="2" step="0.1" value="0.3">
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="testConnection">测试连接</button>
+                        <button class="btn btn-secondary" id="saveAIConfig">保存配置</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">分类配置</div>
+                    
+                    <div class="toggle-row">
+                        <span class="toggle-label">实时分类新书签</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoClassify">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">最大分类数量</label>
+                            <input type="number" class="form-input" id="maxFolders" min="3" max="20" value="10">
+                            <p class="form-hint">AI整理时最多创建的分类数</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">最大层级深度</label>
+                            <input type="number" class="form-input" id="maxDepth" min="1" max="3" value="2">
+                            <p class="form-hint">分类文件夹的最大嵌套层级</p>
+                        </div>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="saveClassificationConfig">保存设置</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">提示词配置</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">系统提示词</label>
+                        <textarea class="form-input" id="systemPrompt" placeholder="自定义系统提示词（可选）"></textarea>
+                        <p class="form-hint">留空使用默认提示词</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">分类提示词模板</label>
+                        <textarea class="form-input" id="classifyPrompt" placeholder="自定义分类提示词（可选）"></textarea>
+                        <p class="form-hint">可用变量: {bookmarks}, {maxCategories}</p>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="savePromptConfig">保存提示词</button>
+                        <button class="btn btn-secondary" id="resetPromptConfig">重置为默认</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="backupPage" class="page">
+                <div class="card">
+                    <div class="card-title">创建备份</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">书签备份</label>
+                        <p class="form-hint" style="margin-bottom: 12px;">备份当前书签结构，可在分类出错时恢复。系统最多保留5个备份。</p>
+                        <button class="btn btn-primary" id="backupNow">立即备份</button>
+                        <span id="backupStatus" style="margin-left: 12px; font-size: 12px; color: #888;"></span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">备份列表</div>
+                    
+                    <div id="backupList"></div>
+                    
+                    <div class="btn-group" style="margin-top: 16px;">
+                        <button class="btn btn-primary" id="restoreBackup" disabled>恢复选中备份</button>
+                        <button class="btn btn-danger" id="deleteBackup" disabled>删除选中备份</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="aboutPage" class="page">
+                <div class="card">
+                    <div class="card-title">关于</div>
+                    <div class="about-section">
+                        <h3>智能书签分类器</h3>
+                        <p>版本: 1.0.0</p>
+                        <p>一款基于AI的智能书签自动分类与管理工具。</p>
+                        
+                        <h3>功能特性</h3>
+                        <ul>
+                            <li>AI智能分类：使用大语言模型自动分析书签内容并分类</li>
+                            <li>批量整理：一键整理书签栏下的所有书签</li>
+                            <li>实时分类：新增书签自动分类到合适文件夹</li>
+                            <li>自定义配置：支持多种AI模型和自定义提示词</li>
+                        </ul>
+                        
+                        <h3>使用说明</h3>
+                        <ul>
+                            <li>1. 在设置页面配置AI模型（推荐DeepSeek）</li>
+                            <li>2. 点击"开始整理"按钮进行批量分类</li>
+                            <li>3. 开启实时分类可自动处理新书签</li>
+                        </ul>
+                        
+                        <h3>更新日志</h3>
+                        <p>v1.0.0 - 初始版本发布</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <link rel="stylesheet" href="components/bookmarkTree.css">
+    <link rel="stylesheet" href="components/classificationFlow.css">
+    <script src="components/bookmarkTree.js"></script>
+    <script src="components/classificationFlow.js"></script>
+    <script src="manager.js"></script>
+</body>
+</html>
